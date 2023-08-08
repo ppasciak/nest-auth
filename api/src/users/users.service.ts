@@ -1,5 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma.service';
 import * as bcrypt from 'bcrypt';
 
@@ -14,6 +16,14 @@ export class UsersService {
       throw new BadRequestException('No details given');
     }
 
+    const exitingUser = await this._prisma.user.findFirst({
+      where: { email },
+    });
+
+    if (exitingUser) {
+      throw new BadRequestException('User with given email already exists');
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     try {
       const user = await this._prisma.user.create({
@@ -21,22 +31,52 @@ export class UsersService {
       });
       return `Created new user with id ${user.id}`;
     } catch (err) {
-      return 'error';
+      throw new BadRequestException(err);
+    }
+  }
+
+  async findAll() {
+    const userList = await this._prisma.user.findMany({
+      select: { email: true, id: true },
+    });
+
+    return userList;
+  }
+
+  async findOne(id: number) {
+    const user = await this._prisma.user.findMany({
+      select: { email: true },
+      where: { id },
+    });
+
+    return user;
+  }
+
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    if (updateUserDto.password) {
+      const hashedPassword = await bcrypt.hash(updateUserDto.password, 10);
+      updateUserDto.password = hashedPassword;
     }
 
-    return 'This action adds a new user';
-  }
+    try {
+      const user = await this._prisma.user.update({
+        data: updateUserDto,
+        where: { id },
+        select: { id: true },
+      });
 
-  findAll() {
-    return `This action returns all users`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto) {
-    return `This action updates a #${id} user`;
+      return user;
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        switch (err.code) {
+          case 'P2025':
+            throw new BadRequestException('No user found');
+          default:
+            throw new BadRequestException('Updating user failed');
+        }
+      }
+      throw new BadRequestException('Updating user failed');
+    }
   }
 
   remove(id: number) {

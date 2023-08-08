@@ -6,3 +6,23 @@ Content-type: application/json
     "email": "test@mail.com",
     "password": "password"
 }
+
+###
+// Get all users
+GET http://localhost:3000/users
+Content-type: application/json
+
+###
+// Get user by ID
+GET http://localhost:3000/users/3
+Content-type: application/json
+
+###
+// Update user 
+PATCH http://localhost:3000/users/3
+Content-type: application/json
+
+{
+    "email": "test137@mail.com",
+    "password": "password"
+}
