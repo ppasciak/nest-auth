@@ -1,0 +1,44 @@
+// Post new user
+POST http://localhost:3000/users
+Content-type: application/json
+
+{
+    "email": "test@mail.com",
+    "password": "password"
+}
+
+### Get all users
+GET http://localhost:3000/users
+Content-type: application/json
+
+### Get user by ID
+GET http://localhost:3000/users/1
+Content-type: application/json
+
+### Update user
+PATCH http://localhost:3000/users/1
+Content-type: application/json
+
+{
+    "password": "password"
+}
+
+### Login user 
+// Should return pair of tokens - access one with expire time defined in env file, 
+// and refresh token used to generate access one after expire time
+POST http://localhost:3000/login
+Content-type: application/json
+
+{
+    "email": "test@mail.com",
+    "password": "password"
+}
+
+### Get new access token 
+// Send refresh token to regenerate new access token
+POST http://localhost:3000/refresh-token
+Content-type: application/json
+
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAbWFpbC5jb20iLCJpYXQiOjE2OTE1NzYyNDN9.OMcFU27GKJpLRhhQFDAA1L8swOS1X9T9n2qKikgTtwA"
+}

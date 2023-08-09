@@ -5,6 +5,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma.service';
 import * as bcrypt from 'bcrypt';
 
+const resourceNotFoundCode = 'P2025';
+
 @Injectable()
 export class UsersService {
   constructor(private _prisma: PrismaService) {}
@@ -69,7 +71,7 @@ export class UsersService {
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         switch (err.code) {
-          case 'P2025':
+          case resourceNotFoundCode:
             throw new BadRequestException('No user found');
           default:
             throw new BadRequestException('Updating user failed');
