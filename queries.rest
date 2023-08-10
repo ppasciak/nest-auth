@@ -33,18 +33,21 @@ Content-type: application/json
 }
 
 ### Get new access token 
-// Send refresh token to regenerate new access token
+// Send REFRESH token to regenerate new access token
+// You will get token from /login call
 POST http://localhost:3000/refresh-token
 Content-type: application/json
 
 {
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAbWFpbC5jb20iLCJpYXQiOjE2OTE1NzYyNDN9.OMcFU27GKJpLRhhQFDAA1L8swOS1X9T9n2qKikgTtwA"
+    "token": "REFRESH_TOKEN"
 }
 
 ### Get protected resource
-// pass access token in authorization header
+// Pass ACCESS token in authorization header
+// You will get the token from /login call or /refresh-token in case of expire
+// Expiration time is defined in .env file
 GET http://localhost:3000/protected
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAbWFpbC5jb20iLCJpYXQiOjE2OTE2NTk5NTcsImV4cCI6MTY5MTY2MTc1N30.sXQVDVa2SV1AMcmwV3iHkeksIG02R92oHdDDIrdbbg8
+Authorization: Bearer ACCESS_TOKEN
 
 ### Logout
 // Pass refresh token to logout and remove token on server
@@ -52,5 +55,5 @@ POST http://localhost:3000/logout
 Content-type: application/json
 
 {
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAbWFpbC5jb20iLCJpYXQiOjE2OTE2NjE0NDN9.UDQCNFSWpv71lxHM2w_G3GK-Q4m1wUXfMsYSt2DUkPY"
+    "token": "REFRESH_TOKEN"
 }
