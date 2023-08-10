@@ -106,8 +106,6 @@ export class AuthService {
     } catch (e) {
       throw new ForbiddenException('Invalid token');
     }
-
-    return 'logout';
   }
 
   getProtected() {
