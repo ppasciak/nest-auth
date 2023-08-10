@@ -2,15 +2,21 @@ import {
   Injectable,
   ForbiddenException,
   BadRequestException,
+  Inject,
 } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma.service';
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from './dto/user-login.dto';
 import * as jwt from 'jsonwebtoken';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
-  constructor(private _prisma: PrismaService) {}
+  constructor(
+    private _prisma: PrismaService,
+    @Inject(REQUEST) private readonly request: Request,
+  ) {}
 
   private async getUserPassword(email: string) {
     const user = await this._prisma.user.findFirst({ where: { email: email } });
@@ -77,5 +83,34 @@ export class AuthService {
     } catch (e) {
       throw new ForbiddenException('Invalid token');
     }
+  }
+
+  async logout(token: string) {
+    if (!token) {
+      throw new BadRequestException('Missing token');
+    }
+
+    try {
+      const data = jwt.verify(token, process.env.JWT_REFRESH_TOKEN) as {
+        email: string;
+      };
+      const dbToken = await this._prisma.refreshToken.deleteMany({
+        where: { token },
+      });
+
+      if (dbToken.count) {
+        return `User ${data.email} logged out successfully`;
+      }
+
+      return `User ${data.email} was already logged out`;
+    } catch (e) {
+      throw new ForbiddenException('Invalid token');
+    }
+
+    return 'logout';
+  }
+
+  getProtected() {
+    return `Logged as ${this.request['user']}`;
   }
 }

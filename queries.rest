@@ -9,11 +9,9 @@ Content-type: application/json
 
 ### Get all users
 GET http://localhost:3000/users
-Content-type: application/json
 
 ### Get user by ID
 GET http://localhost:3000/users/1
-Content-type: application/json
 
 ### Update user
 PATCH http://localhost:3000/users/1
@@ -41,4 +39,18 @@ Content-type: application/json
 
 {
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAbWFpbC5jb20iLCJpYXQiOjE2OTE1NzYyNDN9.OMcFU27GKJpLRhhQFDAA1L8swOS1X9T9n2qKikgTtwA"
+}
+
+### Get protected resource
+// pass access token in authorization header
+GET http://localhost:3000/protected
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAbWFpbC5jb20iLCJpYXQiOjE2OTE2NTk5NTcsImV4cCI6MTY5MTY2MTc1N30.sXQVDVa2SV1AMcmwV3iHkeksIG02R92oHdDDIrdbbg8
+
+### Logout
+// Pass refresh token to logout and remove token on server
+POST http://localhost:3000/logout
+Content-type: application/json
+
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAbWFpbC5jb20iLCJpYXQiOjE2OTE2NjE0NDN9.UDQCNFSWpv71lxHM2w_G3GK-Q4m1wUXfMsYSt2DUkPY"
 }
